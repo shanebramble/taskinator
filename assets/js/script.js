@@ -1,22 +1,21 @@
 var taskIdCounter = 0;
 
+var pageContentEl = document.querySelector("#page-content");
 var formEl = document.querySelector("#task-form");
 var tasksToDoEl = document.querySelector("#tasks-to-do");
-
 
 var taskFormHandler = function (event) {
     event.preventDefault();
 
-    // When we use square brackets[] in a selector, we 're trying to select an HTML 
-    // element by one of its attributes. In this case, we're selecting the < input > 
+    // When we use square brackets[] in a selector, we 're trying to select an HTML
+    // element by one of its attributes. In this case, we're selecting the < input >
     // element on the page that has a name attribute set to a value of "task-name".
 
     var taskNameInput = document.querySelector("input[name='task-name']").value;
     var taskTypeInput = document.querySelector("select[name='task-type']").value;
 
-
-    // When used in a condition, empty strings and the number 0 are evaluated as 
-    // falsy values.When we use the syntax!taskNameInput, we 're checking to see 
+    // When used in a condition, empty strings and the number 0 are evaluated as
+    // falsy values.When we use the syntax!taskNameInput, we 're checking to see
     // if the taskNameInput variable is empty by asking if it's a falsy value.
     // check if input values are empty strings
 
@@ -25,20 +24,18 @@ var taskFormHandler = function (event) {
         return false;
     }
 
-    // The browser - provided DOM element interface has the reset() method, which 
-    // is designed specifically for the < form > element and won 't work on any other 
-    // element. 
+    // The browser - provided DOM element interface has the reset() method, which
+    // is designed specifically for the < form > element and won 't work on any other
+    // element.
     formEl.reset();
     // package up data as an object
     var taskDataObj = {
         name: taskNameInput,
-        type: taskTypeInput
+        type: taskTypeInput,
     };
 
     // send it as an argument to createTaskEl
     createTaskEl(taskDataObj);
-
-
 };
 
 var createTaskEl = function (taskDataObj) {
@@ -54,7 +51,12 @@ var createTaskEl = function (taskDataObj) {
     // give it a class name
     taskInfoEl.className = "task-info";
     // add HTML content to div
-    taskInfoEl.innerHTML = "<h3 class='task-name'>" + taskDataObj.name + "</h3><span class='task-type'>" + taskDataObj.type + "</span>";
+    taskInfoEl.innerHTML =
+        "<h3 class='task-name'>" +
+        taskDataObj.name +
+        "</h3><span class='task-type'>" +
+        taskDataObj.type +
+        "</span>";
 
     listItemEl.appendChild(taskInfoEl);
 
@@ -91,21 +93,48 @@ var createTaskActions = function (taskId) {
     statusSelectEl.setAttribute("name", "status-change");
     statusSelectEl.setAttribute("data-task-id", taskId);
 
-    var statusChoices = ["To Do","In Progress","Completed"];
+    var statusChoices = ["To Do", "In Progress", "Completed"];
 
     for (var i = 0; i < statusChoices.length; i++) {
         // create option element
         var statusOptionEl = document.createElement("option");
         statusOptionEl.textContent = statusChoices[i];
-        statusOptionEl.setAttribute("value",statusChoices[i]);
+        statusOptionEl.setAttribute("value", statusChoices[i]);
 
         // append to select
         statusSelectEl.appendChild(statusOptionEl);
-        
     }
     actionContainerEl.appendChild(statusSelectEl);
-    
+
     return actionContainerEl;
 };
+var taskButtonHandler = function (event)
+{
+    console.log(event.target);
 
+    // The matches() method is similar to using the querySelector() method, but it 
+    // doesn 't find and return an element. Instead, it returns true if the element 
+    // would be returned by a querySelector() with the same argument,and it returns 
+    // false if it wouldn' t.
+
+    if (event.target.matches(".delete-btn")) {
+        // get the element's task id
+        var taskId = event.target.getAttribute("data-task-id");
+        deleteTask(taskId);
+    }
+};
+var deleteTask = function (taskId) {
+    var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+    
+    // The ChildNode.remove() method removes the object from the tree it belongs to.
+    taskSelected.remove();
+};
+
+
+
+pageContentEl.addEventListener("click", taskButtonHandler);
 formEl.addEventListener("submit", taskFormHandler);
+
+
+
+
